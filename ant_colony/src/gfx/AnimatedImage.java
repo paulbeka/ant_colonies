@@ -11,6 +11,7 @@ public abstract class AnimatedImage {
 	protected int x, y;
 	
 	public void render(Graphics g) {
+		// Loop to the next image, then back to the start
 		if(current >= imageList.length)
 			current = 0;
 		g.drawImage(imageList[current], x, y, width, height, null);

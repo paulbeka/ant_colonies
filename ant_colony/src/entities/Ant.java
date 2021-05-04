@@ -1,7 +1,5 @@
 package entities;
 
-import java.awt.Graphics;
-
 import gfx.AnimatedImage;
 
 public class Ant extends AnimatedImage {
@@ -16,8 +14,8 @@ public class Ant extends AnimatedImage {
 		
 	}
 	
-	private void update() {
-		// implement ant behavior here
+	public void update() {
+		x += 1;
 	}
 	
 }

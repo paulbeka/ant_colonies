@@ -22,13 +22,12 @@ public class AntApp implements java.lang.Runnable {
 	public AntApp(int width, int height) {
 		this.width = width;
 		this.height = height;
-		
 	}
 	
 	private void init() {
 		display = new Display("Ants", width, height);
 		
-		simState = new SimState();
+		simState = new SimState(width, height);
 		
 		State.setState(simState);
 	}
