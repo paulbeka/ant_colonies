@@ -1,5 +1,7 @@
 package entities;
 
+import java.util.Arrays;
+
 import gfx.AntAnimated;
 import states.SimState;
 
@@ -9,6 +11,8 @@ public class Ant extends AntAnimated {
 	private char pathState;
 	private boolean hasFood;
 	private int smellRange;
+	
+	private int upperMoveLimit, lowerMoveLimit;
 	
 	public Ant(int x, int y) {
 		this.x = x;
@@ -20,6 +24,8 @@ public class Ant extends AntAnimated {
 		pathState = 'r';
 		hasFood = false;
 		smellRange = 4;
+		
+		
 	}
 	
 	public void update() {
@@ -34,8 +40,15 @@ public class Ant extends AntAnimated {
 	private void move() {
 		int prevX = x;
 		int prevY = y;
-		x += Math.round(((Math.random() * 2) -1));
-		y += Math.round(((Math.random() * 2) -1));
+		
+		int[] bestLoc = getBestDirection();
+		if(bestLoc[0] == 0 && bestLoc[1] == 0) {
+			x += Math.round(((Math.random() * 2) -1));
+			y += Math.round(((Math.random() * 2) -1));
+		} else {
+			x += bestLoc[0];
+			y += bestLoc[1];
+		}
 		
 		if(!(prevX == x && prevY == y))
 			moved = true;
@@ -51,12 +64,20 @@ public class Ant extends AntAnimated {
 			for(int j = 0; j <= smellRange; j++) {
 				currX = startSmellX+i;
 				currY = startSmellY+j;
+				
+				// checks if you are within range
+				// TODO: SOLVE THIS PROBLEM WHERE YOU NEED TO PUT IN THE SCREEN DIMENTIONS
+				if(currX < 0 || currY < 0 || currX > 800 || currY > 800)
+					continue;
+				
 				// Looking for food so go to food
 				if(!hasFood && SimState.getWorld().getLocation(currX, currY) == 'f') {
 					bestLoc = goThereOrNot(1, currX, currY, bestLoc);
 				// looking for food so don't go home
 				} else if (!hasFood && SimState.getWorld().getLocation(currX, currY) == 'r')  {
-					bestLoc = goThereOrNot(-1, currX, currY, bestLoc);
+					int res[] = goThereOrNot(-1, currX, currY, bestLoc);
+					bestLoc[0] += res[0];
+					bestLoc[1] += res[1];
 				// looking to go home
 				} else if (hasFood && SimState.getWorld().getLocation(currX, currY) == 'r') {
 					bestLoc = goThereOrNot(1, currX, currY, bestLoc);
@@ -66,6 +87,13 @@ public class Ant extends AntAnimated {
 				}
 			}
 		}
+		
+		// Set the values to 1 or 0
+		if(bestLoc[0] != 0)
+			bestLoc[0] = bestLoc[0]/Math.abs(bestLoc[0]);
+		if(bestLoc[1] != 0)
+			bestLoc[1] = bestLoc[1]/Math.abs(bestLoc[1]);
+
 		return bestLoc;
 	}
 	

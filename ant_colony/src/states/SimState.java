@@ -24,6 +24,10 @@ public class SimState extends State {
 	
 	private void generate() {
 		ants[0] = new Ant(40, 40);
+		/*
+		 * ants[1] = new Ant(42,42); ants[2] = new Ant(34, 42); ants[3] = new
+		 * Ant(39,39);
+		 */
 		colony = new Colony(40, 40);
 	}
 
