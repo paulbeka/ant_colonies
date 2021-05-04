@@ -45,7 +45,7 @@ public class AntApp implements java.lang.Runnable {
 			return;
 		}
 		g = bs.getDrawGraphics();
-		g.clearRect(0, 0, width, height);
+		g.fillRect(0, 0, width, height);
 		
 		if(State.getState() != null) {
 			State.getState().render(g);
@@ -59,11 +59,23 @@ public class AntApp implements java.lang.Runnable {
 		
 		init();
 		
+		int fps = 30;
+		double timePerTick = 1000000000 / fps;
+		double delta = 0;
+		long now;
+		long lastTime = System.nanoTime();
+
 		while(running) {
 			
-			update();
-			render();
+			now = System.nanoTime();
+			delta += (now - lastTime) / timePerTick;
+			lastTime = now;
 			
+			if(delta >= 1) {
+				update();
+				render();
+				delta--;
+			}
 		}
 		
 		stop();

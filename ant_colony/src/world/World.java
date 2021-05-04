@@ -31,5 +31,13 @@ public class World {
 			}
 		}
 	}
+	
+	public void setLocation(int x, int y, char val) {
+		map[x][y] = val;
+	}
+	
+	public char getLocation(int x, int y) {
+		return map[x][y];
+	}
 
 }

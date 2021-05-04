@@ -3,18 +3,28 @@ package states;
 import java.awt.Graphics;
 
 import entities.Ant;
+import entities.Colony;
 import world.World;
 
 public class SimState extends State {
 	
 	private Ant ants[];
-	private World world;
+	private static World world;
+	
+	private Colony colony;
 	// number of ants in the system
 	private int numAnts = 20;
 	
 	public SimState(int width, int height) {
 		world = new World(width, height);
 		ants = new Ant[numAnts];
+		
+		generate();
+	}
+	
+	private void generate() {
+		ants[0] = new Ant(40, 40);
+		colony = new Colony(40, 40);
 	}
 
 	@Override
@@ -28,11 +38,16 @@ public class SimState extends State {
 
 	@Override
 	public void render(Graphics g) {
-		// Render world first, then the ants
+		// Render world and ants first, then the colonies
 		world.render(g);
 		for(Ant ant : ants) {
 			if(ant != null)
 				ant.render(g);
 		}
+		colony.render(g);
+	}
+	
+	public static World getWorld() {
+		return world;
 	}
 }
