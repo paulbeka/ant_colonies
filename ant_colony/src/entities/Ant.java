@@ -11,9 +11,8 @@ public class Ant extends AntAnimated {
 	private char pathState;
 	private boolean hasFood;
 	private int smellRange;
-	
-	private int upperMoveLimit, lowerMoveLimit;
-	
+	private int intelligence;
+		
 	public Ant(int x, int y) {
 		this.x = x;
 		this.y = y;
@@ -23,9 +22,8 @@ public class Ant extends AntAnimated {
 	private void init() {
 		pathState = 'r';
 		hasFood = false;
-		smellRange = 4;
-		
-		
+		smellRange = 8;
+		intelligence = 3;
 	}
 	
 	public void update() {
@@ -42,22 +40,37 @@ public class Ant extends AntAnimated {
 		int prevY = y;
 		
 		int[] bestLoc = getBestDirection();
-		if(bestLoc[0] == 0 && bestLoc[1] == 0) {
-			x += Math.round(((Math.random() * 2) -1));
-			y += Math.round(((Math.random() * 2) -1));
-		} else {
-			x += bestLoc[0];
-			y += bestLoc[1];
-		}
+		int randX = Math.round((int) (smellRange*Math.random()) -smellRange/2 +bestLoc[0]*intelligence);
+		int randY = Math.round((int) (smellRange*Math.random()) -smellRange/2 +bestLoc[1]*intelligence);
 		
+		// Check if divide by 0
+		if(randX == 0) 
+			x += Math.round(((Math.random() * 2) -1));
+		else
+			x += randX/Math.abs(randX);
+		
+		if(randY == 0)
+			y += Math.round(((Math.random() * 2) -1));
+		else
+			y += randY/Math.abs(randY);
+		
+		if(y >= 799)
+			y = 0;
+		if(x >= 799)
+			x = 0;
+		if(x <= 0)
+			x = 799;
+		if(y <= 0)
+			y = 799;
+				
 		if(!(prevX == x && prevY == y))
 			moved = true;
 	}
 	
 	public int[] getBestDirection() {
 		int[] bestLoc = new int[2];
-		int startSmellX = (int) x-smellRange/2;
-		int startSmellY = (int) y-smellRange/2;
+		int startSmellX = (int) x-smellRange/2 -1;
+		int startSmellY = (int) y-smellRange/2 -1;
 		
 		int currX, currY;
 		for(int i = 0; i <= smellRange; i++) {
@@ -67,7 +80,7 @@ public class Ant extends AntAnimated {
 				
 				// checks if you are within range
 				// TODO: SOLVE THIS PROBLEM WHERE YOU NEED TO PUT IN THE SCREEN DIMENTIONS
-				if(currX < 0 || currY < 0 || currX > 800 || currY > 800)
+				if(currX < 0 || currY < 0 || currX > 799 || currY > 799 || (currX == x && currY == y))
 					continue;
 				
 				// Looking for food so go to food
@@ -75,19 +88,17 @@ public class Ant extends AntAnimated {
 					bestLoc = goThereOrNot(1, currX, currY, bestLoc);
 				// looking for food so don't go home
 				} else if (!hasFood && SimState.getWorld().getLocation(currX, currY) == 'r')  {
-					int res[] = goThereOrNot(-1, currX, currY, bestLoc);
-					bestLoc[0] += res[0];
-					bestLoc[1] += res[1];
+					bestLoc = goThereOrNot(-1, currX, currY, bestLoc);
 				// looking to go home
 				} else if (hasFood && SimState.getWorld().getLocation(currX, currY) == 'r') {
 					bestLoc = goThereOrNot(1, currX, currY, bestLoc);
 				// going home so don't go towards food
-				} else {
+				} else if (hasFood && SimState.getWorld().getLocation(currX, currY) == 'f'){
 					bestLoc = goThereOrNot(-1, currX, currY, bestLoc);
-				}
+				} 
 			}
 		}
-		
+
 		// Set the values to 1 or 0
 		if(bestLoc[0] != 0)
 			bestLoc[0] = bestLoc[0]/Math.abs(bestLoc[0]);

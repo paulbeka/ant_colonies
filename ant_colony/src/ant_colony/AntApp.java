@@ -1,5 +1,6 @@
 package ant_colony;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import states.SimState;
@@ -45,7 +46,9 @@ public class AntApp implements java.lang.Runnable {
 			return;
 		}
 		g = bs.getDrawGraphics();
+		g.setColor(Color.white);
 		g.fillRect(0, 0, width, height);
+		g.setColor(Color.black);
 		
 		if(State.getState() != null) {
 			State.getState().render(g);
@@ -59,7 +62,7 @@ public class AntApp implements java.lang.Runnable {
 		
 		init();
 		
-		int fps = 30;
+		int fps = 60;
 		double timePerTick = 1000000000 / fps;
 		double delta = 0;
 		long now;
