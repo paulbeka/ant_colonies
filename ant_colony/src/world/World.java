@@ -14,6 +14,13 @@ public class World {
 		map = new char[width][height];
 		this.width = width;
 		this.height = height;
+		for(int i = 0; i < 799; i++) {
+			map[i][200] = 'r';
+			map[i][201] = 'r';
+			map[i][202] = 'r';
+			map[i][203] = 'r';
+			map[i][204] = 'r';
+		}
 	}
 	
 	public void update() {
@@ -27,7 +34,11 @@ public class World {
 					g.setColor(Color.red);
 					g.fillRect(i, j, 1, 1);
 					g.setColor(Color.black);
-				}
+				} else if (map[i][j] == 'f') {
+					g.setColor(Color.green);
+					g.fillRect(i,j,1,1);
+					g.setColor(Color.black);
+				} 
 			}
 		}
 	}
