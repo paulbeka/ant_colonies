@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import gfx.AntAnimated;
 import states.SimState;
+import world.Tile;
 
 public class Ant extends AntAnimated {
 	
@@ -12,6 +13,7 @@ public class Ant extends AntAnimated {
 	private boolean hasFood;
 	private int smellRange;
 	private int intelligence;
+	private int lastX, lastY;
 		
 	public Ant(int x, int y) {
 		this.x = x;
@@ -23,19 +25,21 @@ public class Ant extends AntAnimated {
 		pathState = 'r';
 		hasFood = false;
 		smellRange = 6;
-		intelligence = 2;
+		intelligence = -2;
 	}
 	
 	public void update() {
 		moved = false;
 		move();
 		
-		if(SimState.getWorld().getLocation(x, y) == 'f') {
+		if(SimState.getWorld().getLocationValue(x, y) == Tile.FOOD) {
 			hasFood = true;
 		}
 		
-		if(moved)
+		if(moved) {
 			SimState.getWorld().setLocation(x, y, pathState);
+			SimState.getWorld().setAnt(lastX, lastY, false);
+		}
 		
 		if(hasFood)
 			pathState = 'f';
@@ -90,25 +94,24 @@ public class Ant extends AntAnimated {
 				
 				// checks if you are within range
 				// TODO: SOLVE THIS PROBLEM WHERE YOU NEED TO PUT IN THE SCREEN DIMENTIONS
-				if(currX < 0 || currY < 0 || currX > 799 || currY > 799 || (currX == this.x && currY == this.y))
+				if(currX < 0 || currY < 0 || currX > 799 || currY > 799 || currX == this.x || currY == this.y)
 					continue;
 
 				// Looking for food so go to food
-				if(!hasFood && SimState.getWorld().getLocation(currX, currY) == 'f') {
+				if(!hasFood && SimState.getWorld().getLocationValue(currX, currY) == Tile.FOOD) {
 					bestLoc[0] += smellRange/2 -(currX -x);
 					bestLoc[1] += smellRange/2 - (currY - y);
 				// looking for food so don't go home
-				} else if (!hasFood && SimState.getWorld().getLocation(currX, currY) == 'r')  {
-					System.out.println(smellRange/2 - (x - currX));
+				} else if (!hasFood && SimState.getWorld().getLocationValue(currX, currY) == Tile.ANT_TRAIL)  {
 					xRange += smellRange/2 - (x - currX);
 					bestLoc[0] += smellRange/2 - (x - currX);
 					bestLoc[1] += smellRange/2 - (y - currY);
 				// looking to go home
-				} else if (hasFood && SimState.getWorld().getLocation(currX, currY) == 'r') {
+				} else if (hasFood && SimState.getWorld().getLocationValue(currX, currY) == Tile.ANT_TRAIL) {
 					bestLoc[0] += smellRange/2 -(currX -x);
 					bestLoc[1] += smellRange/2 - (currY - y);
 				// going home so don't go towards food
-				} else if (hasFood && SimState.getWorld().getLocation(currX, currY) == 'f'){
+				} else if (hasFood && SimState.getWorld().getLocationValue(currX, currY) == Tile.FOOD){
 					bestLoc[0] += smellRange/2 - (x - currX);
 					bestLoc[1] += smellRange/2 - (y - currY);
 				} 

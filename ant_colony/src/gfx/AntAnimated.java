@@ -7,7 +7,7 @@ public abstract class AntAnimated extends AnimatedImage {
 	private SpriteSheet sheet;
 	
 	public AntAnimated() {
-		generateImage();
+		//generateImage();
 	}
 	
 	private void generateImage() {

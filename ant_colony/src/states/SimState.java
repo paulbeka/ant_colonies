@@ -13,7 +13,7 @@ public class SimState extends State {
 	
 	private Colony colony;
 	// number of ants in the system
-	private int numAnts = 1;
+	private int numAnts = 1000;
 	
 	public SimState(int width, int height) {
 		world = new World(width, height);
@@ -24,7 +24,7 @@ public class SimState extends State {
 	
 	private void generate() {
 		for(int i = 0; i < numAnts; i++) {
-			ants[i] = new Ant(400, 400);
+			ants[i] = new Ant(400+1, 400+i);
 		}
 		colony = new Colony(400, 400);
 	}
@@ -43,8 +43,8 @@ public class SimState extends State {
 		// Render world and ants first, then the colonies
 		world.render(g);
 		for(Ant ant : ants) {
-			if(ant != null)
-				ant.render(g);
+			//if(ant != null)
+				//ant.render(g);
 		}
 		colony.render(g);
 	}
